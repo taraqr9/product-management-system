@@ -7,7 +7,8 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/create-user', [AuthController::class, 'createUser']);
+    Route::post('/user/create', [AuthController::class, 'createUser'])->name('user.create');
+    Route::delete('/user/delete/{id}', [AuthController::class, 'deleteUser'])->name('user.delete');
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });

@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Enums\RoleEnum;
 use App\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
@@ -51,5 +52,11 @@ class AuthRepository implements AuthRepositoryInterface
         $user->assignRole($role);
 
         return $user;
+    }
+
+    public function deleteUser($user): bool
+    {
+
+        return $user->delete();
     }
 }

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RoleEnum;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegistrationRequest;
+use App\Models\User;
 use App\Repositories\Contracts\AuthRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -91,4 +93,39 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+    public function deleteUser($id): JsonResponse
+    {
+        if (!auth()->user()->hasRole(RoleEnum::ADMIN->value)) {
+            return response()->json([
+                'status' => 403,
+                'message' => 'Unauthorized action: only admins can delete users',
+            ], 403);
+        }
+
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'User not found',
+            ], 404);
+        }
+
+        try {
+            $this->authRepository->deleteUser($user);
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'User deleted successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'User deletion failed',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 }
