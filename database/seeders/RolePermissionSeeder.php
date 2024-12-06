@@ -11,22 +11,25 @@ class RolePermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
-            'create_products',
-            'edit_products',
-            'delete_products',
-            'view_products',
-            'manage_users',
-            'manage_roles',
+            'product-list',
+            'product-create',
+            'product-edit',
+            'product-delete',
+            'user-create',
+            'user-delete',
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate([
+                'name' => $permission,
+                'guard_name' => 'api', // Ensure the guard is 'api'
+            ]);
         }
 
-        $admin = Role::create(['name' => 'admin']);
-        $viewer = Role::create(['name' => 'viewer']);
+        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'api']);
+        $viewer = Role::firstOrCreate(['name' => 'viewer', 'guard_name' => 'api']);
 
         $admin->givePermissionTo($permissions);
-        $viewer->givePermissionTo('view_products');
+        $viewer->givePermissionTo(['product-list']);
     }
 }

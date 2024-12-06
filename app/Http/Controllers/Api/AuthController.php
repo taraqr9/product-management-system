@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Enums\RoleEnum;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegistrationRequest;
@@ -103,17 +104,8 @@ class AuthController extends Controller
             ], 403);
         }
 
-        $user = User::find($id);
-
-        if (!$user) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'User not found',
-            ], 404);
-        }
-
         try {
-            $this->authRepository->deleteUser($user);
+            $this->authRepository->deleteUser($id);
 
             return response()->json([
                 'status' => 200,
