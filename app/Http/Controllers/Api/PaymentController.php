@@ -25,9 +25,17 @@ class PaymentController extends Controller
         try {
             $payment = $this->paymentRepository->processPayment($data);
 
-            return response()->json(['message' => 'Payment successful', 'payment' => $payment], 200);
+            return response()->json([
+                'status' => 200,
+                'message' => 'Payment successful',
+                'payment' => $payment,
+            ], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Payment failed', 'error' => $e->getMessage()], 400);
+            return response()->json([
+                'status' => 400,
+                'message' => 'Payment failed',
+                'error' => $e->getMessage(),
+            ], 400);
         }
     }
 }

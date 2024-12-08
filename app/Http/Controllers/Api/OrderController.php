@@ -21,9 +21,17 @@ class OrderController extends Controller
         try {
             $order = $this->orderRepository->createOrder($request->validated());
 
-            return response()->json(['message' => 'Order placed successfully', 'order' => $order], 201);
+            return response()->json([
+                'status' => 201,
+                'message' => 'Order placed successfully',
+                'order' => $order,
+            ], 201);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 400);
+            return response()->json([
+                'status' => 400,
+                'message' => 'Order placement failed',
+                'error' => $e->getMessage(),
+            ], 400);
         }
     }
 }

@@ -77,6 +77,13 @@ class AuthController extends Controller
 
     public function createUser(CreateUserRequest $request): JsonResponse
     {
+        if (! auth()->user()->hasRole(RoleEnum::ADMIN->value)) {
+            return response()->json([
+                'status' => 403,
+                'message' => 'Unauthorized action: only admins can delete users',
+            ], 403);
+        }
+
         try {
             $user = $this->authRepository->createUser($request->validated());
 

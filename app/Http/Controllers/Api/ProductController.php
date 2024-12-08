@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\RoleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductStoreRequest;
 use App\Http\Requests\ProductUpdateRequest;
@@ -19,18 +20,15 @@ class ProductController extends Controller
         $this->productRepository = $productRepository;
     }
 
-    public static function middleware(): array
-    {
-        return [
-            new Middleware(PermissionMiddleware::using('product-list|product-show'), only: ['index', 'show']),
-            new Middleware(PermissionMiddleware::using('product-create'), only: ['create', 'store']),
-            new Middleware(PermissionMiddleware::using('product-edit'), only: ['edit', 'update']),
-            new Middleware(PermissionMiddleware::using('product-delete'), only: ['destroy']),
-        ];
-    }
-
     public function store(ProductStoreRequest $request): JsonResponse
     {
+        if (! auth()->user()->hasRole(RoleEnum::ADMIN->value)) {
+            return response()->json([
+                'status' => 403,
+                'message' => 'Unauthorized action: only admins can delete users',
+            ], 403);
+        }
+
         try {
             $product = $this->productRepository->createProduct($request->validated());
 
@@ -50,6 +48,13 @@ class ProductController extends Controller
 
     public function update(ProductUpdateRequest $request, $id): JsonResponse
     {
+        if (! auth()->user()->hasRole(RoleEnum::ADMIN->value)) {
+            return response()->json([
+                'status' => 403,
+                'message' => 'Unauthorized action: only admins can delete users',
+            ], 403);
+        }
+
         try {
             $product = $this->productRepository->updateProduct($request->validated(), $id);
 
@@ -69,6 +74,13 @@ class ProductController extends Controller
 
     public function destroy($id): JsonResponse
     {
+        if (! auth()->user()->hasRole(RoleEnum::ADMIN->value)) {
+            return response()->json([
+                'status' => 403,
+                'message' => 'Unauthorized action: only admins can delete users',
+            ], 403);
+        }
+        
         try {
             $this->productRepository->deleteProduct($id);
 

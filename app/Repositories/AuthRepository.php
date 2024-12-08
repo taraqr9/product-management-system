@@ -40,12 +40,6 @@ class AuthRepository implements AuthRepositoryInterface
 
     public function createUser(array $data): User
     {
-        $currentUser = auth()->user();
-
-        if (! $currentUser || ! $currentUser->hasRole('admin')) {
-            abort(403, 'Unauthorized action.');
-        }
-
         $user = User::create(Arr::except($data, ['role']));
 
         $role = $data['role'] ?? 'viewer';
