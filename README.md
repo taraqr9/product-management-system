@@ -1,66 +1,206 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Product Purchase System API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This project provides a RESTful API for user authentication, product management, order management, and payment
+processing using Laravel. The system integrates with Stripe for handling payments.
 
-## About Laravel
+## Prerequisites
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **PHP**: 8.x or higher
+- **Composer**
+- **MySQL** (or any compatible database)
+- **Stripe account** (for secret keys)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Installation Steps
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- git clone <repository-url>
+- composer install
+- cp .env.example .env
+- Configure the DB and STRIPE_SECRET
+- php artisan migrate --seed
 
-## Learning Laravel
+After running the migrations, the following user will be generated automatically:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```json
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+"email": "admin@admin.com",
+"password": "123456"
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+  ```
 
-## Laravel Sponsors
+## API Endpoints
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Authentication
 
-### Premium Partners
+#### Register
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+- **Endpoint**: `/register`
+- **Method**: POST
+- **Request Body**:
 
-## Contributing
+```json
+  {
+    "name": "string",
+    "email": "string",
+    "password": "string",
+    "password_confirmation": "string"
+}
+  ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Authentication
 
-## Code of Conduct
+#### Login
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- **Endpoint**: `/login`
+- **Method**: POST
+- **Request Body**:
 
-## Security Vulnerabilities
+  ```json
+  {
+      "email": "string",
+      "password": "string"
+  }
+  ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## User Management (Requires Authentication)
 
-## License
+### Create User
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **Endpoint**: `/user/store`
+- **Method**: POST
+- **Request Body**:
+
+  ```json
+  {
+      "name": "string",
+      "email": "string",
+      "password": "string",
+      "role": "string (e.g., admin or viewer)"
+  }
+  ```
+
+## User Management (Requires Authentication)
+
+### Delete User
+
+- **Endpoint**: `/user/delete/{id}`
+- **Method**: DELETE
+- **Response**:
+    - **200 OK**: User deleted successfully.
+- ## Product Management (Requires Authentication)
+
+### List Products
+
+- **Endpoint**: `/products`
+- **Method**: GET
+- **Response**:
+    - **200 OK**: Returns a list of all products.
+
+### Create Product
+
+- **Endpoint**: `/products`
+- **Method**: POST
+- **Request Body**:
+
+  ```json
+  {
+      "name": "string",
+      "price": "numeric",
+      "stock": "integer"
+  }
+    ```
+
+### Update Product
+
+- **Endpoint**: `/products/{id}`
+- **Method**: PUT
+- **Request Body**:
+
+  ```json
+  {
+      "name": "string",
+      "price": "numeric",
+      "stock": "integer"
+  }
+    ```
+
+### Delete Product
+
+- **Endpoint**: `/products/{id}`
+- **Method**: DELETE
+- **Response**:
+    - **200 OK**: Product deleted successfully.
+
+## Order Management (Requires Authentication)
+
+### Place an Order
+
+- **Endpoint**: `/orders`
+- **Method**: POST
+- **Request Body**:
+
+  ```json
+  {
+      "product_id": "integer",
+      "quantity": "integer"
+  }
+  ```
+
+## Payment Processing (Requires Authentication)
+
+### Process a Payment
+
+- **Endpoint**: `/payments`
+- **Method**: POST
+- **Request Body**:
+
+  ```json
+  {
+      "token": "string (Stripe payment token)",
+      "product_name": "string",
+      "amount": "numeric"
+  }
+  ```
+
+## Logout (Requires Authentication)
+
+### Logout User
+
+- **Endpoint**: `/logout`
+- **Method**: POST
+- **Response**:
+    - **200 OK**: Logout successful.
+
+## Journey (Example Flow)
+
+1. **User Registration**:  
+   Hit `/register` to register a user.
+
+2. **Login**:  
+   Authenticate with `/login` to get a token.
+
+3. **Manage Users (Admin Role Only)**:  
+   Use `/user/store` to create users or `/user/delete/{id}` to delete.
+
+4. **Manage Products (Admin Role Only)**:  
+   List, create, update, and delete products using `/products` endpoints.
+
+5. **Place Orders**:  
+   Place an order via `/orders`.
+
+6. **Process Payments**:  
+   Make a payment using `/payments`.
+
+7. **Logout**:  
+   Log out of the system with `/logout`.
+
+## Notes
+
+### Roles:
+
+- **Admin**: Full access to create, update, delete, and view products and users.
+- **Viewer**: Can only view products and cannot place orders or manage users.
+
+### Payment:
+
+Ensure you configure your Stripe secret in `.env` for payment processing.
+

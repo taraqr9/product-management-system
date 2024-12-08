@@ -9,7 +9,7 @@ use Illuminate\Http\JsonResponse;
 
 class OrderController extends Controller
 {
-    private $orderRepository;
+    private OrderRepositoryInterface $orderRepository;
 
     public function __construct(OrderRepositoryInterface $orderRepository)
     {

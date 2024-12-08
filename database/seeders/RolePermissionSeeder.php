@@ -22,12 +22,12 @@ class RolePermissionSeeder extends Seeder
         foreach ($permissions as $permission) {
             Permission::firstOrCreate([
                 'name' => $permission,
-                'guard_name' => 'api', // Ensure the guard is 'api'
+                'guard_name' => 'web',
             ]);
         }
 
-        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'api']);
-        $viewer = Role::firstOrCreate(['name' => 'viewer', 'guard_name' => 'api']);
+        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $viewer = Role::firstOrCreate(['name' => 'viewer', 'guard_name' => 'web']);
 
         $admin->givePermissionTo($permissions);
         $viewer->givePermissionTo(['product-list']);

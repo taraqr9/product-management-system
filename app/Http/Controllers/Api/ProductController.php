@@ -8,8 +8,6 @@ use App\Http\Requests\ProductStoreRequest;
 use App\Http\Requests\ProductUpdateRequest;
 use App\Repositories\ProductRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controllers\Middleware;
-use Spatie\Permission\Middleware\PermissionMiddleware;
 
 class ProductController extends Controller
 {
@@ -80,7 +78,7 @@ class ProductController extends Controller
                 'message' => 'Unauthorized action: only admins can delete users',
             ], 403);
         }
-        
+
         try {
             $this->productRepository->deleteProduct($id);
 

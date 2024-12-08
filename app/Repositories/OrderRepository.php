@@ -8,7 +8,7 @@ use App\Repositories\Contracts\OrderRepositoryInterface;
 
 class OrderRepository implements OrderRepositoryInterface
 {
-    public function createOrder(array $data)
+    public function createOrder(array $data): Order
     {
         $product = Product::findOrFail($data['product_id']);
 
@@ -22,7 +22,7 @@ class OrderRepository implements OrderRepositoryInterface
         return Order::create($data);
     }
 
-    public function getOrderById($id)
+    public function getOrderById($id): Order
     {
         return Order::findOrFail($id);
     }
