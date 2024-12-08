@@ -2,15 +2,9 @@
 
 namespace App\Repositories;
 
-use App\Enums\RoleEnum;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\User;
 use App\Repositories\Contracts\OrderRepositoryInterface;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
-use App\Repositories\Contracts\AuthRepositoryInterface;
 
 class OrderRepository implements OrderRepositoryInterface
 {
@@ -22,19 +16,10 @@ class OrderRepository implements OrderRepositoryInterface
             throw new \Exception('Insufficient stock');
         }
 
-        $totalPrice = $product->price * $data['quantity'];
-
-        // Deduct stock
+        $data['total_price'] = $product->price * $data['quantity'];
         $product->decrement('stock', $data['quantity']);
 
-        // Create order
-        return Order::create([
-            'user_id' => $data['user_id'],
-            'product_id' => $data['product_id'],
-            'quantity' => $data['quantity'],
-            'total_price' => $totalPrice,
-            'status' => 'pending',
-        ]);
+        return Order::create($data);
     }
 
     public function getOrderById($id)

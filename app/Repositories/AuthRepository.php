@@ -2,12 +2,11 @@
 
 namespace App\Repositories;
 
-use App\Enums\RoleEnum;
 use App\Models\User;
+use App\Repositories\Contracts\AuthRepositoryInterface;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use App\Repositories\Contracts\AuthRepositoryInterface;
 
 class AuthRepository implements AuthRepositoryInterface
 {
@@ -15,6 +14,7 @@ class AuthRepository implements AuthRepositoryInterface
     {
         $user = User::create($data);
         $user->assignRole('viewer');
+
         return $user;
     }
 
@@ -22,7 +22,7 @@ class AuthRepository implements AuthRepositoryInterface
     {
         $user = User::where('email', $data['email'])->first();
 
-        if (!$user || !Hash::check($data['password'], $user->password)) {
+        if (! $user || ! Hash::check($data['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -42,7 +42,7 @@ class AuthRepository implements AuthRepositoryInterface
     {
         $currentUser = auth()->user();
 
-        if (!$currentUser || !$currentUser->hasRole('admin')) {
+        if (! $currentUser || ! $currentUser->hasRole('admin')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -57,6 +57,7 @@ class AuthRepository implements AuthRepositoryInterface
     public function deleteUser($id): bool
     {
         $user = User::findOrFail($id);
+
         return $user->delete();
     }
 }

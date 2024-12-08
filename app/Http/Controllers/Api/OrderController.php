@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OrderStoreRequest;
 use App\Repositories\Contracts\OrderRepositoryInterface;
+use Illuminate\Http\JsonResponse;
 
 class OrderController extends Controller
 {
@@ -14,19 +16,10 @@ class OrderController extends Controller
         $this->orderRepository = $orderRepository;
     }
 
-    public function store(Request $request)
+    public function store(OrderStoreRequest $request): JsonResponse
     {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
-        ]);
-
         try {
-            $order = $this->orderRepository->createOrder([
-                'user_id' => auth()->id(),
-                'product_id' => $request->product_id,
-                'quantity' => $request->quantity,
-            ]);
+            $order = $this->orderRepository->createOrder($request->validated());
 
             return response()->json(['message' => 'Order placed successfully', 'order' => $order], 201);
         } catch (\Exception $e) {

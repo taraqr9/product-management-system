@@ -9,7 +9,6 @@ use App\Repositories\ProductRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controllers\Middleware;
 use Spatie\Permission\Middleware\PermissionMiddleware;
-use Spatie\Permission\Models\Role;
 
 class ProductController extends Controller
 {

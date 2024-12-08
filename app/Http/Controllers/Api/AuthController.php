@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegistrationRequest;
-use App\Models\User;
 use App\Repositories\Contracts\AuthRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -97,7 +96,7 @@ class AuthController extends Controller
 
     public function deleteUser($id): JsonResponse
     {
-        if (!auth()->user()->hasRole(RoleEnum::ADMIN->value)) {
+        if (! auth()->user()->hasRole(RoleEnum::ADMIN->value)) {
             return response()->json([
                 'status' => 403,
                 'message' => 'Unauthorized action: only admins can delete users',
@@ -119,5 +118,4 @@ class AuthController extends Controller
             ], 500);
         }
     }
-
 }

@@ -2,40 +2,45 @@
 
 namespace App\Repositories;
 
+use App\Enums\PaymentStatusEnum;
 use App\Models\Payment;
-use App\Models\Product;
 use App\Repositories\Contracts\PaymentRepositoryInterface;
-use App\Repositories\Contracts\ProductRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
+use Stripe\Charge;
+use Stripe\Stripe;
 
 class PaymentRepository implements PaymentRepositoryInterface
 {
     public function processPayment(array $data)
     {
-        Stripe::setApiKey(env('STRIPE_SECRET'));
+        Stripe::setApiKey(config('app.stipe_secret'));
 
         try {
-            $charge = Charge::create([
-                'amount' => $data['amount'] * 100, // Amount in cents
+            DB::beginTransaction();
+
+            Charge::create([
+                'amount' => $data['amount'] * 100,
                 'currency' => 'usd',
                 'source' => $data['token'],
                 'description' => $data['description'],
             ]);
 
-            // Save payment details
-            return Payment::create([
+            $payment = Payment::create([
                 'user_id' => $data['user_id'],
                 'product_name' => $data['product_name'],
                 'amount' => $data['amount'],
-                'status' => 'success',
+                'status' => PaymentStatusEnum::SUCCESS->value,
             ]);
+
+            DB::commit();
+
+            return $payment;
         } catch (\Exception $e) {
-            // Log the failure and return status
             Payment::create([
                 'user_id' => $data['user_id'],
                 'product_name' => $data['product_name'],
                 'amount' => $data['amount'],
-                'status' => 'failed',
+                'status' => PaymentStatusEnum::FAILED->value,
             ]);
 
             throw $e;

@@ -9,8 +9,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Product extends Model
 {
-    use HasFactory, HasApiTokens, HasRoles;
+    use HasApiTokens, HasFactory, HasRoles;
 
     protected $guarded = [];
-
 }

@@ -17,12 +17,14 @@ class ProductRepository implements ProductRepositoryInterface
     {
         $product = Product::findOrFail($id);
         $product->update($data);
+
         return $product;
     }
 
     public function deleteProduct(int $id): bool
     {
         $product = Product::findOrFail($id);
+
         return $product->delete();
     }
 

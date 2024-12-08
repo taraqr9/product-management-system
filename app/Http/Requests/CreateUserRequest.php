@@ -19,7 +19,7 @@ class CreateUserRequest extends FormRequest
             'name' => 'required|string|max:100',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
-            'role' => ['required', 'string', Rule::in(array_column(RoleEnum::cases(), 'value'))]
+            'role' => ['required', 'string', Rule::in(array_column(RoleEnum::cases(), 'value'))],
         ];
     }
 }
